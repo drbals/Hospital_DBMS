@@ -1,0 +1,4 @@
+# tkinter
+# pickle
+Pillow
+mysql-connector-python==8.4.0
