@@ -3,25 +3,34 @@ from tkinter import messagebox
 from datetime import datetime
 import client
 
+# Constants
+WINDOW_TITLE = "Patient Dashboard"
+WINDOW_ICON = "images/house.ico"
+WINDOW_GEOMETRY = "1200x600"
+HISTORY_LABEL_WIDTH = 50
+RECORD_LABEL_WIDTH = 60
+MEDICINE_LABEL_WIDTH = 60
+TEST_LABEL_WIDTH = 60
+
 root = Tk()
-root.title("Patient Dashboard")
-root.iconbitmap("images/house.ico")
-root.geometry("1200x600")
+root.title(WINDOW_TITLE)
+root.iconbitmap(WINDOW_ICON)
+root.geometry(WINDOW_GEOMETRY)
 
 # --------------------------------PATIENT DASHBOARD
 PATIENT_ID = 1
 slotLbl = Label(root, text="")
 
-history_lbl = Label(root, text="Appointment & Patient History", relief=SUNKEN, anchor='center', width=50, bg="green", fg="white")
+history_lbl = Label(root, text="Appointment & Patient History", relief=SUNKEN, anchor='center', width=HISTORY_LABEL_WIDTH, bg="green", fg="white")
 history_lbl.grid(row=0, column=0, columnspan=4, sticky=N + S + E + W)
 
-record_lbl = Label(root, text="Record Details", relief=SUNKEN, anchor='center', width=60, bg="blue", fg="white")
+record_lbl = Label(root, text="Record Details", relief=SUNKEN, anchor='center', width=RECORD_LABEL_WIDTH, bg="blue", fg="white")
 record_lbl.grid(row=0, column=4, columnspan=4, sticky=N + S + E + W)
 
 def docDisplay():
     global docList, docListResult, docDrop
     deptNoClicked = giveNum(deptListResult, deptClicked.get())
-    docListResult = cdb.transact("appointmentdoc", deptNoClicked)
+    docListResult = client.transact("appointmentdoc", deptNoClicked)
     docList = [row[1] for row in docListResult]
     docDrop = OptionMenu(root, docClicked, *docList)
     docDrop.grid(row=1, column=1)
@@ -35,16 +44,14 @@ def giveNum(deplist, dept):
 def slotDisplay():
     global docNoClicked, nextSlot, slotLbl, bookBtn
     docNoClicked = giveNum(docListResult, docClicked.get())
-    nextSlot = cdb.transact("nextslot", docNoClicked)
+    nextSlot = client.transact("nextslot", docNoClicked)
     slotLbl = Label(root, text="NextSlot at "+str(nextSlot), bg="yellow")
     slotLbl.grid(row=3, column=0)
     bookBtn = Button(root, text="Book slot", command=lambda: bookSlot(docNoClicked, nextSlot))
     bookBtn.grid(row=3, column=1)
 
-
 def bookSlot(docNo, slotnext):
-    global PATIENT_ID
-    status = cdb.transact("bookslot", PATIENT_ID, docNo, slotnext)
+    status = client.transact("bookslot", PATIENT_ID, docNo, slotnext)
     if not status:
         messagebox.showinfo("Lifeline Hospitals", "Slot not booked!")
     else:
@@ -57,7 +64,7 @@ def showRecord(id):
     if id == 0:
         messagebox.showinfo("Lifeline Hospitals", "Please select a record!")
         return
-    detailsList, testsList, medsList = cdb.transact("record retrieve", id)
+    detailsList, testsList, medsList = client.transact("record retrieve", id)
     apptIdLbl = Label(root, text="Appt.ID: "+str(detailsList[0]))
     apptIdLbl.grid(row=1, column=4)
     apptTimeLbl = Label(root, text="Appt.Time: "+ str(detailsList[1]))
@@ -70,22 +77,18 @@ def showRecord(id):
     docIdLbl.grid(row=3, column=4)
     docNameLbl = Label(root, text="Doctor Name: " + str(detailsList[5]))
     docNameLbl.grid(row=3, column=6)
-    # diseaseNameLbl = Label(root, text="Disease Name: " + str(detailsList[6]))
-    # diseaseNameLbl.grid(row=4, column=4, columnspan=4)
 
-    meds_lbl = Label(root, text="Medicines Prescribed", relief=SUNKEN, anchor='center', width=60, bg="blue", fg="white")
+    meds_lbl = Label(root, text="Medicines Prescribed", relief=SUNKEN, anchor='center', width=MEDICINE_LABEL_WIDTH, bg="blue", fg="white")
     meds_lbl.grid(row=4, column=4, columnspan=4, sticky=N + S + E + W)
     r_value = 5
-    # Medicines prescribed Heading
     medLbl = Label(root, text="Medicine Name" + "              " + "Quantity" + "               " + "Cost Per Medicine")
     medLbl.grid(row=r_value, column=4, columnspan=4, sticky=N + S + E + W)
     r_value += 1
     for med, medCost, medQuantity in medsList:
-        medLbl= Label(root, text=med + "                           " + str(medQuantity) + "                            " + str(medCost)+"/-")
+        medLbl = Label(root, text=med + "                           " + str(medQuantity) + "                            " + str(medCost)+"/-")
         medLbl.grid(row=r_value, column=4, columnspan=4, sticky=N + S + E + W)
         r_value += 1
-    # Tests prescribed Heading
-    tests_lbl = Label(root, text="Tests Prescribed", relief=SUNKEN, anchor='center', width=60, bg="blue", fg="white")
+    tests_lbl = Label(root, text="Tests Prescribed", relief=SUNKEN, anchor='center', width=TEST_LABEL_WIDTH, bg="blue", fg="white")
     tests_lbl.grid(row=r_value, column=4, columnspan=4, sticky=N + S + E + W)
     r_value += 1
     testLbl = Label(root, text="Test Name" + "               " + "Test Cost" + "              " + "Test Status" )
@@ -97,9 +100,8 @@ def showRecord(id):
         testLbl.grid(row=r_value, column=4, columnspan=3, sticky=N + S + E + W)
         r_value += 1
 
-
 def getRecords():
-    recordsList = cdb.transact("patientrecords", PATIENT_ID)
+    recordsList = client.transact("patientrecords", PATIENT_ID)
     idValue = IntVar()
     r_value = 5
     c_value = 0
@@ -109,9 +111,8 @@ def getRecords():
     recordBtn = Button(root, text="Show Record", command=lambda: showRecord(idValue.get()))
     recordBtn.grid(row=r_value, column=0)
 
-
 # DeptList Dropdown
-deptListResult = cdb.transact("appointmentdept")
+deptListResult = client.transact("appointmentdept")
 deptList = [row[1] for row in deptListResult]
 deptClicked = StringVar()
 deptClicked.set("Select Department")
@@ -123,7 +124,7 @@ deptBtn.grid(row=2, column=0)
 
 # DocList Dropdown
 docList = ["Select Doctor"]
-docListResult =[]
+docListResult = []
 docClicked = StringVar()
 docClicked.set("Select Doctor")
 docDrop = OptionMenu(root, docClicked, *docList)
@@ -138,11 +139,10 @@ bookBtn = Button(root, text="Book slot", command=lambda: bookSlot(docNoClicked, 
 
 # Past Records
 recordsLbl = Label(root, text="Past Records", bg="red", fg="white")
-recordsLbl.grid(row=4, column=0, pady=10, sticky= W + E)
+recordsLbl.grid(row=4, column=0, pady=10, sticky=W + E)
 getRecords()
 
-
-details_lbl = Label(root, text="Patient Details & Reports", relief=SUNKEN, anchor='center', width=60, bg="brown", fg="white")
+details_lbl = Label(root, text="Patient Details & Reports", relief=SUNKEN, anchor='center', width=RECORD_LABEL_WIDTH, bg="brown", fg="white")
 details_lbl.grid(row=0, column=8, columnspan=4, sticky=N + S + E + W)
 
 root.mainloop()

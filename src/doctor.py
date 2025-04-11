@@ -26,7 +26,7 @@ def showRecord(id):
     if id == 0 or id == "Enter":
         messagebox.showinfo("Lifeline Hospitals", "Please select a record!")
     else:
-        detailsList, testsList, medsList = cdb.transact("record retrieve", id)
+        detailsList, testsList, medsList = client.transact("record retrieve", id)
         apptIdLbl = Label(root, text="Appt.ID: " + str(detailsList[0]))
         apptIdLbl.grid(row=1, column=4)
         apptTimeLbl = Label(root, text="Appt.Time: " + str(detailsList[1]))
@@ -74,7 +74,7 @@ def showRecord(id):
 
 
 def getReffCases(id):
-    recordsList = cdb.transact("docrecords", id)
+    recordsList = client.transact("docrecords", id)
     idValue = IntVar()
     r_value = 3
     c_value = 0

@@ -7,20 +7,26 @@ import client
 LARGE_FONT = ("Verdana", 12)
 PATIENT_ID = 0
 DOCTOR_ID = 0
+WINDOW_WIDTH = 0
+WINDOW_HEIGHT = 0
 
 
 class hospitalApp(tk.Tk):
+    """Main application class for Lifeline Hospitals."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.iconbitmap("images/house.ico")
         self.title("Lifeline Hospitals")
 
+        # Container setup
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         self.frames = {}
 
+        # Frame loading
         for F in (loginPage, patientSignup, doctorSignup, patientLogin, doctorLogin, staffLogin):
             frame = F(container, self)
             self.frames[F] = frame
@@ -32,9 +38,12 @@ class hospitalApp(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
+
 class loginPage(tk.Frame):
+    """Login and Signup page for users."""
+
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
         label_0 = tk.Label(self, text="Login/Signup", width=20, font=("bold", 20))
         label_0.place(x=90, y=10)
 
@@ -69,14 +78,14 @@ class loginPage(tk.Frame):
                 messagebox.showwarning("Lifeline Hospitals", "Please enter required data!")
             else:
                 if section == 1:
-                    answer = cdb.transact("login", str(emailid), str(pwd))
+                    answer = client.transact("login", str(emailid), str(pwd))
                     if answer == "False":
                         messagebox.showwarning("Lifeline Hospitals", "Patient not yet registered!")
                     else:
                         PATIENT_ID = answer
                         controller.show_frame(patientLogin)
                 elif section == 2:
-                    answer = cdb.transact("doclogin", str(emailid), str(pwd))
+                    answer = client.transact("doclogin", str(emailid), str(pwd))
                     if answer == "False":
                         messagebox.showwarning("Lifeline Hospitals", "Doctor not yet registered!")
                     else:
@@ -98,13 +107,14 @@ class loginPage(tk.Frame):
                     controller.show_frame(doctorSignup)
 
         tk.Button(self, text='Login', command=login).place(x=250, y=250)
-
         tk.Button(self, text='Sign Up', command=signup).place(x=170, y=250)
 
 
 class patientSignup(tk.Frame):
+    """Patient signup page."""
+
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
 
         label = tk.Label(self, text="Patient Signup", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
@@ -114,8 +124,10 @@ class patientSignup(tk.Frame):
 
 
 class doctorSignup(tk.Frame):
+    """Doctor signup page."""
+
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
 
         label = tk.Label(self, text="Doctor Signup", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
@@ -123,17 +135,22 @@ class doctorSignup(tk.Frame):
         button1 = ttk.Button(self, text="Logout", command=lambda: controller.show_frame(loginPage))
         button1.pack()
 
+
 class patientLogin(tk.Frame):
+    """Patient dashboard page."""
+
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
 
         label = tk.Label(self, text="Patient Dashboard", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
 
 
 class doctorLogin(tk.Frame):
+    """Doctor dashboard page."""
+
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
 
         label = tk.Label(self, text="Doctor Dashboard", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
@@ -143,8 +160,10 @@ class doctorLogin(tk.Frame):
 
 
 class staffLogin(tk.Frame):
+    """Staff dashboard page."""
+
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        super().__init__(parent)
 
         label = tk.Label(self, text="Staff Dashboard", font=LARGE_FONT)
         label.pack(pady=10, padx=10)
@@ -155,13 +174,7 @@ class staffLogin(tk.Frame):
 
 app = hospitalApp()
 app.state('zoomed')
-width_value = app.winfo_screenwidth()
-height_value = app.winfo_screenheight()
-app.geometry("%dx%d+0+0" % (width_value, height_value))
+WINDOW_WIDTH = app.winfo_screenwidth()
+WINDOW_HEIGHT = app.winfo_screenheight()
+app.geometry("%dx%d+0+0" % (WINDOW_WIDTH, WINDOW_HEIGHT))
 app.mainloop()
-
-
-
-
-
-

@@ -318,24 +318,27 @@ def handle_client(conn, addr):
     print(f"[NEW CONNECTION] {addr} connected.")
     connected = True
     while connected:
-        msg_length = conn.recv(HEADER).decode(FORMAT)
-        if msg_length:
-            msg_length = int(msg_length)
-            msg = pickle.loads(conn.recv(msg_length))
-            if msg[0] == DISCONNECT_MESSAGE:
-                connected = False
-                print(f"[{addr}] Requested to close connection")
-                result = True
-            else:
-                print(f"[{addr}] {msg[0]}")
-                result = dbconnect(*msg)
-                mydb.commit()
-            message = pickle.dumps(result)
-            msg_length = len(message)
-            send_length = str(msg_length).encode(FORMAT)
-            send_length += b' ' * (HEADER - len(send_length))
-            conn.send(send_length)
-            conn.send(message)
+        try:
+            msg_length = conn.recv(HEADER).decode(FORMAT)
+            if msg_length:
+                msg_length = int(msg_length)
+                msg = pickle.loads(conn.recv(msg_length))
+                if msg[0] == DISCONNECT_MESSAGE:
+                    connected = False
+                    print(f"[{addr}] Requested to close connection")
+                    result = True
+                else:
+                    print(f"[{addr}] {msg[0]}")
+                    result = dbconnect(*msg)
+                    mydb.commit()
+                message = pickle.dumps(result)
+                msg_length = len(message)
+                send_length = str(msg_length).encode(FORMAT)
+                send_length += b' ' * (HEADER - len(send_length))
+                conn.send(send_length)
+                conn.send(message)
+        except ConnectionResetError:
+            print("Client disconnected abruptly.")
     conn.close()
     return
 
