@@ -1,6 +1,7 @@
 .idea/
-src/LabProjectDesign(group18).pdf
+LabProjectDesign(group18).pdf
 src/archive
 src/temp.pdf
-src/pdf.py
-src/vit.py
+src/archive/pdf.py
+src/archive/vit.py
+.venv
