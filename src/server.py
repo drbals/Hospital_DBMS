@@ -329,8 +329,13 @@ def handle_client(conn, addr):
                     result = True
                 else:
                     print(f"[{addr}] {msg[0]}")
-                    result = dbconnect(*msg)
-                    mydb.commit()
+                    try:
+                        result = dbconnect(*msg)
+                        mydb.commit()
+                    except Exception as sql_exc:
+                        mydb.rollback()
+                        print(f"SQL Exception: {sql_exc}")
+                        result = f"Error: {sql_exc}"
                 message = pickle.dumps(result)
                 msg_length = len(message)
                 send_length = str(msg_length).encode(FORMAT)
