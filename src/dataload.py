@@ -35,7 +35,7 @@ print(client.transact("signup", "Patient10", '1990-05-09', "Female",
 # Adding Doctors
 print(client.transact("docsignup", "doctorPass", "Doctor1", 1, '1980-09-05', "Male",
                               r"D.no: 6-23/3, Doctors Colony, Lankelapalem, Visakhapatnam - 531019",
-                   7680005343, 200000, "doctor1@gmail.com", "qwerty123"));
+                   7680005343, 200000, "doctor1@gmail.com", "qwerty123"))
 print(client.transact("docsignup", "doctorPass", "Doctor2", 1, '1981-09-05', "Male",
                               r"D.no: 6-24/3, Doctors Colony, Lankelapalem, Visakhapatnam - 531019",
                    7680005343, 200000, "doctor2@gmail.com", "qwerty123"))

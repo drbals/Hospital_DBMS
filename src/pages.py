@@ -1,4 +1,6 @@
+import hashlib
 import tkinter as tk
+from datetime import datetime
 from tkinter import messagebox
 import client
 
@@ -7,6 +9,7 @@ HISTORY_LABEL_WIDTH = 50
 RECORD_LABEL_WIDTH = 60
 MEDICINE_LABEL_WIDTH = 60
 TEST_LABEL_WIDTH = 60
+FORM_FIELD_WIDTH = 30
 
 class LoginPage(tk.Frame):
     """Login and Signup page for users."""
@@ -89,15 +92,93 @@ class LoginPage(tk.Frame):
 
 class PatientSignup(tk.Frame):
     """Patient signup page."""
-
-    def __init__(self, parent, controller):
+    
+    def __init__(self, parent, controller=None):
+        """
+        Initialize the PatientSignup form.
+        If a controller is provided, you can use it to switch frames.
+        """
         super().__init__(parent)
+        self.controller = controller
 
-        label = tk.Label(self, text="Patient Signup", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
+        self.header = tk.Label(self, text="Patient Signup", font=LARGE_FONT)
+        self.header.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
 
-        button1 = tk.Button(self, text="Logout", command=lambda: controller.get_frame(LoginPage))
-        button1.pack()
+        tk.Label(self, text="Patient Name:").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+        self.name_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.name_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Date of Birth (YYYY-MM-DD):").grid(row=2, column=0, sticky="e", padx=5, pady=5)
+        self.dob_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.dob_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Gender:").grid(row=3, column=0, sticky="e", padx=5, pady=5)
+        self.gender_var = tk.StringVar(value="Select")
+        self.gender_option = tk.OptionMenu(self, self.gender_var, "Male", "Female", "Other")
+        self.gender_option.grid(row=3, column=1, padx=5, pady=5, sticky="w")
+
+        tk.Label(self, text="Address:").grid(row=4, column=0, sticky="ne", padx=5, pady=5)
+        self.address_text = tk.Text(self, width=FORM_FIELD_WIDTH, height=3)
+        self.address_text.grid(row=4, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Contact Number:").grid(row=5, column=0, sticky="e", padx=5, pady=5)
+        self.contact_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.contact_entry.grid(row=5, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Email:").grid(row=6, column=0, sticky="e", padx=5, pady=5)
+        self.email_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.email_entry.grid(row=6, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Password:").grid(row=7, column=0, sticky="e", padx=5, pady=5)
+        self.password_entry = tk.Entry(self, width=FORM_FIELD_WIDTH, show="*")
+        self.password_entry.grid(row=7, column=1, padx=5, pady=5)
+
+        submit_btn = tk.Button(self, text="Submit", command=self.submit_form)
+        submit_btn.grid(row=8, column=0, columnspan=2, pady=10)
+
+    def submit_form(self):
+        """Extract form data, validate inputs, and make the client call to sign up."""
+        patientName = self.name_entry.get().strip()
+        dob_str = self.dob_entry.get().strip()
+        gender = self.gender_var.get().strip()
+        address = self.address_text.get("1.0", tk.END).strip()
+        contact = self.contact_entry.get().strip()
+        email = self.email_entry.get().strip()
+        password = self.password_entry.get().strip()
+
+        # Validate required fields
+        if not (patientName and dob_str and gender and address and contact and email and password):
+            messagebox.showerror("Error", "All fields are required.")
+            return
+        if gender == "Select":
+            messagebox.showerror("Error", "Please select a gender.")
+            return
+
+        # Validate DOB format
+        try:
+            datetime.strptime(dob_str, "%Y-%m-%d")
+        except ValueError:
+            messagebox.showerror("Error", "Date of Birth must be in YYYY-MM-DD format.")
+            return
+
+        # Validate Contact Number (should be all digits)
+        if not contact.isdigit():
+            messagebox.showerror("Error", "Contact number must contain only digits.")
+            return
+
+        # Validate Password Length
+        if len(password) < 6:
+            messagebox.showerror("Error", "Password must be at least 6 characters long.")
+            return
+
+        try:
+            # Perform the client call.
+            result = client.transact("signup", patientName, dob_str, gender,
+                                     address, int(contact), email, 0, 0, 0, 0, password)
+            messagebox.showinfo("Success", f"Sign up successful! Result: {result}")
+            self.controller.get_frame(LoginPage)
+        except Exception as e:
+            messagebox.showerror("Error", f"Sign up failed: {e}")
 
     def load_frame(self):
         pass
@@ -106,18 +187,125 @@ class PatientSignup(tk.Frame):
 class DoctorSignup(tk.Frame):
     """Doctor signup page."""
 
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller=None):
+        """
+        Initialize the Doctor Signup form.
+        'controller' can be used to navigate between pages in a multi-page app.
+        """
         super().__init__(parent)
+        self.controller = controller
 
-        label = tk.Label(self, text="Doctor Signup", font=LARGE_FONT)
-        label.pack(pady=10, padx=10)
+        self.header = tk.Label(self, text="Doctor Signup", font=LARGE_FONT)
+        self.header.grid(row=0, column=0, columnspan=2, pady=10, padx=10)
 
-        button1 = tk.Button(self, text="Logout", command=lambda: controller.get_frame(LoginPage))
-        button1.pack()
+        tk.Label(self, text="Master Password:").grid(row=1, column=0, sticky="e", padx=5, pady=5)
+        self.master_pass_entry = tk.Entry(self, width=FORM_FIELD_WIDTH, show="*")
+        self.master_pass_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Doctor Name:").grid(row=2, column=0, sticky="e", padx=5, pady=5)
+        self.name_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.name_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Department Number:").grid(row=3, column=0, sticky="e", padx=5, pady=5)
+        self.dept_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.dept_entry.grid(row=3, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Date of Birth (YYYY-MM-DD):").grid(row=4, column=0, sticky="e", padx=5, pady=5)
+        self.dob_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.dob_entry.grid(row=4, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Gender:").grid(row=5, column=0, sticky="e", padx=5, pady=5)
+        self.gender_var = tk.StringVar(value="Select")
+        self.gender_option = tk.OptionMenu(self, self.gender_var, "Male", "Female", "Other")
+        self.gender_option.grid(row=5, column=1, padx=5, pady=5, sticky="w")
+
+        tk.Label(self, text="Address:").grid(row=6, column=0, sticky="ne", padx=5, pady=5)
+        self.address_text = tk.Text(self, width=FORM_FIELD_WIDTH, height=3)
+        self.address_text.grid(row=6, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Contact Number:").grid(row=7, column=0, sticky="e", padx=5, pady=5)
+        self.contact_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.contact_entry.grid(row=7, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Salary:").grid(row=8, column=0, sticky="e", padx=5, pady=5)
+        self.salary_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.salary_entry.grid(row=8, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Email:").grid(row=9, column=0, sticky="e", padx=5, pady=5)
+        self.email_entry = tk.Entry(self, width=FORM_FIELD_WIDTH)
+        self.email_entry.grid(row=9, column=1, padx=5, pady=5)
+
+        tk.Label(self, text="Account Password:").grid(row=10, column=0, sticky="e", padx=5, pady=5)
+        self.password_entry = tk.Entry(self, width=FORM_FIELD_WIDTH, show="*")
+        self.password_entry.grid(row=10, column=1, padx=5, pady=5)
+
+        submit_button = tk.Button(self, text="Submit", command=self.submit_form)
+        submit_button.grid(row=11, column=0, columnspan=2, pady=10)
 
     def load_frame(self):
         pass
 
+    def submit_form(self):
+        """Validates the input and submits the signup form."""
+        master_pass = self.master_pass_entry.get().strip()
+        doctor_name = self.name_entry.get().strip()
+        dept_num = self.dept_entry.get().strip()
+        dob_str = self.dob_entry.get().strip()
+        gender = self.gender_var.get().strip()
+        address = self.address_text.get("1.0", tk.END).strip()
+        contact = self.contact_entry.get().strip()
+        salary = self.salary_entry.get().strip()
+        email = self.email_entry.get().strip()
+        password = self.password_entry.get().strip()
+
+        if not (master_pass and doctor_name and dept_num and dob_str and gender and address and contact and salary and email and password):
+            messagebox.showerror("Error", "All fields are required.")
+            return
+
+        if gender == "Select":
+            messagebox.showerror("Error", "Please select a gender.")
+            return
+
+        try:
+            dept_num = int(dept_num)
+        except ValueError:
+            messagebox.showerror("Error", "Department Number must be an integer.")
+            return
+
+        try:
+            datetime.strptime(dob_str, "%Y-%m-%d")
+        except ValueError:
+            messagebox.showerror("Error", "Date of Birth must be in YYYY-MM-DD format.")
+            return
+
+        if not contact.isdigit():
+            messagebox.showerror("Error", "Contact number must contain only digits.")
+            return
+
+        try:
+            salary = float(salary)
+        except ValueError:
+            messagebox.showerror("Error", "Salary must be a number.")
+            return
+
+        if master_pass != "doctorPass":
+            messagebox.showerror("Error", "Invalid Master Password.")
+            return
+
+        if len(password) < 6:
+            messagebox.showerror("Error", "Password must be at least 6 characters long.")
+            return
+
+        try:
+            result = client.transact("docsignup", master_pass, doctor_name, dept_num, dob_str, gender,
+                                      address, int(contact), salary, email, password)
+            if result:
+                messagebox.showinfo("Success", "Signup successful!")
+                self.controller.get_frame(LoginPage)
+            else:
+                messagebox.showerror("Error", "Signup failed. Please check your details and try again.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Signup encountered an exception:\n{e}")
 
 class PatientLogin(tk.Frame):
     patientId = None
@@ -131,11 +319,9 @@ class PatientLogin(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        # Header Label
-        header = tk.Label(self, text="Patient Dashboard", font=LARGE_FONT)
-        header.grid(row=0, column=0, columnspan=12, pady=10, padx=10)
+        self.header = tk.Label(self, text="Patient Dashboard", font=LARGE_FONT)
+        self.header.grid(row=0, column=0, columnspan=12, pady=10, padx=10)
 
-        # Dashboard Sections
         self.history_lbl = tk.Label(self, text="Appointment & Patient History",
                                     relief=tk.SUNKEN, anchor='center',
                                     width=HISTORY_LABEL_WIDTH, bg="green", fg="white")
@@ -151,7 +337,6 @@ class PatientLogin(tk.Frame):
                                     width=RECORD_LABEL_WIDTH, bg="brown", fg="white")
         self.details_lbl.grid(row=1, column=8, columnspan=4, sticky=tk.N + tk.S + tk.E + tk.W)
 
-        # Department Dropdown
         self.deptListResult = client.transact("appointmentdept")
         self.deptList = [row[1] for row in self.deptListResult]
         self.deptClicked = tk.StringVar()
@@ -159,14 +344,12 @@ class PatientLogin(tk.Frame):
         self.deptDrop = tk.OptionMenu(self, self.deptClicked, *self.deptList)
         self.deptDrop.grid(row=2, column=0)
 
-        # Button to Load Doctors for Selected Department
         self.deptBtn = tk.Button(self, text="See Doctors", command=self.doc_display)
         self.deptBtn.grid(row=3, column=0)
 
         self.logOutBtn = tk.Button(self, text="Logout", command=lambda: controller.get_frame(LoginPage))
         self.logOutBtn.grid(row=4, column=18)
 
-        # Doctor Dropdown
         self.docClicked = tk.StringVar()
         self.docClicked.set("Select Doctor")
         self.docList = ["Select Doctor"]
@@ -174,23 +357,17 @@ class PatientLogin(tk.Frame):
         self.docDrop = tk.OptionMenu(self, self.docClicked, *self.docList)
         self.docDrop.grid(row=2, column=1)
 
-        # Button to Show Next Slot for the Selected Doctor
         self.docBtn = tk.Button(self, text="Show Next Slot", command=self.slot_display)
         self.docBtn.grid(row=3, column=1)
 
-        # Variables for Slot and Booking Buttons (initialized later)
         self.slotLbl = None
         self.bookBtn = None
 
-        # Past Records Section
         self.recordsLbl = tk.Label(self, text="Past Records", bg="red", fg="white")
         self.recordsLbl.grid(row=5, column=0, pady=10, sticky=tk.W + tk.E)
 
     def load_frame(self):
-        print('hi')
         if PatientLogin.patientId is not None:
-            print('hai')
-            print(PatientLogin.patientId)
             self.get_records()
 
     def doc_display(self):
@@ -324,11 +501,9 @@ class DoctorLogin(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        # Header Label
-        header = tk.Label(self, text="Doctor Dashboard", font=LARGE_FONT)
-        header.grid(row=0, column=0, columnspan=12, pady=10, padx=10)
+        self.header = tk.Label(self, text="Doctor Dashboard", font=LARGE_FONT)
+        self.header.grid(row=0, column=0, columnspan=12, pady=10, padx=10)
 
-        # Dashboard Headers (row 1)
         self.history_lbl = tk.Label(self, text="Medical History",
                                     relief=tk.SUNKEN, anchor='center',
                                     width=HISTORY_LABEL_WIDTH, bg="green", fg="white")
@@ -344,7 +519,6 @@ class DoctorLogin(tk.Frame):
                                       width=RECORD_LABEL_WIDTH, bg="brown", fg="white")
         self.prescribe_lbl.grid(row=1, column=7, columnspan=4, sticky=tk.N + tk.S + tk.E + tk.W)
 
-        # Appointment ID Section (row 2)
         self.apptIdLbl = tk.Label(self, text="Appointment ID:", anchor=tk.W, width=10)
         self.apptIdLbl.grid(row=2, column=0, sticky=tk.W + tk.E)
 
@@ -356,11 +530,9 @@ class DoctorLogin(tk.Frame):
                                    command=lambda: self.show_record(self.idEntry.get()))
         self.getRecBtn.grid(row=2, column=2)
 
-        # Referred Cases Section (row 3)
         self.refCasesLbl = tk.Label(self, text="Reffered Cases", bg="red", fg="white")
         self.refCasesLbl.grid(row=3, column=1, pady=10, sticky=tk.W + tk.E)
 
-        # Placeholder for "Prescribe Meds" label if needed (row 4)
         self.giveMedsLbl = tk.Label(self, text="Prescribe Meds")
         self.giveMedsLbl.grid(row=4, column=0)
 
@@ -369,7 +541,6 @@ class DoctorLogin(tk.Frame):
 
     def load_frame(self):
         if DoctorLogin.doctorId is not None:
-            # Get referred cases
             self.get_reff_cases(DoctorLogin.doctorId)
 
     def show_record(self, rec_id):
