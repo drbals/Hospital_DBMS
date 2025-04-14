@@ -2,17 +2,8 @@ import tkinter as tk
 from datetime import datetime
 from tkinter import messagebox
 import client
-
-LARGE_FONT = ("Verdana", 20)
-MEDIUM_FONT = ("Verdana", 15)
-SMALL_FONT = ("Verdana", 10)
-HISTORY_LABEL_WIDTH = 50
-RECORD_LABEL_WIDTH = 60
-MEDICINE_LABEL_WIDTH = 60
-TEST_LABEL_WIDTH = 60
-FORM_FIELD_WIDTH = 20
-TEXT_FIELD_WIDTH = 30
-TEXT_FIELD_HEIGHT = 5   
+from config import *
+ 
 
 class BasePage(tk.Frame):
     """A base page with helper methods to reduce redundancy."""

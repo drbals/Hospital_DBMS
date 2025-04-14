@@ -4,13 +4,7 @@ from datetime import datetime
 from tkinter import messagebox
 from base_page import BasePage
 import client
-
-LARGE_FONT = ("Verdana", 12)
-HISTORY_LABEL_WIDTH = 50
-RECORD_LABEL_WIDTH = 60
-MEDICINE_LABEL_WIDTH = 60
-TEST_LABEL_WIDTH = 60
-FORM_FIELD_WIDTH = 30
+from config import *
 
 class LoginPage(tk.Frame):
     """Login and Signup page for users."""
