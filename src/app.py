@@ -4,6 +4,8 @@ from tkinter import messagebox
 import client
 from config import *
 from base_page import BasePage
+import re
+from validator import Validator
  
 class LoginPage(BasePage):
     """Login and Signup page for users."""
@@ -41,9 +43,6 @@ class LoginPage(BasePage):
         self.pwd = self.entry_pwd.get()
         self.section = self.var.get()
         self.var.set(0)
-        self.entry_email.delete(0, 'end')
-        self.entry_pwd.delete(0, 'end')
-
 
         if self.section == 0 or not self.emailID or not self.pwd:
             messagebox.showwarning("Lifeline Hospitals", "Please enter required data!")
@@ -114,6 +113,7 @@ class PatientSignup(BasePage):
         self.make_grid_responsive()
 
     def submit_form(self):
+        print("name": self.name_entry.get())
         patientName = self.name_entry.get().strip()
         dob_str = self.dob_entry.get().strip()
         gender = self.gender_var.get().strip()
@@ -125,22 +125,30 @@ class PatientSignup(BasePage):
         if not (patientName and dob_str and gender and address and contact and email and password):
             messagebox.showerror("Error", "All fields are required.")
             return
-        if gender == "Select":
-            messagebox.showerror("Error", "Please select a gender.")
+
+        valid, msg = Validator.validate_gender(gender)
+        if not valid:   
+            messagebox.showerror("Error", msg)
+            return
+        
+        valid, msg = Validator.validate_dob(dob_str)
+        if not valid:
+            messagebox.showerror("Error", msg)
             return
 
-        try:
-            datetime.strptime(dob_str, "%Y-%m-%d")
-        except ValueError:
-            messagebox.showerror("Error", "Date of Birth must be in YYYY-MM-DD format.")
+        valid, msg = Validator.validate_contact(contact)
+        if not valid:
+            messagebox.showerror("Error", msg)
             return
 
-        if not contact.isdigit():
-            messagebox.showerror("Error", "Contact number must contain only digits.")
+        valid, msg = Validator.validate_email(email)
+        if not valid:
+            messagebox.showerror("Error", msg)
             return
-
-        if len(password) < 6:
-            messagebox.showerror("Error", "Password must be at least 6 characters long.")
+        
+        valid, msg = Validator.validate_password(password)
+        if not valid:
+            messagebox.showerror("Error", msg)
             return
 
         try:
@@ -215,38 +223,45 @@ class DoctorSignup(BasePage):
             messagebox.showerror("Error", "All fields are required.")
             return
 
-        if gender == "Select":
-            messagebox.showerror("Error", "Please select a gender.")
+
+        valid, msg = Validator.validate_dept_number(dept_num)
+        if not valid:
+            messagebox.showerror("Error", msg)
+            return
+    
+        valid, msg = Validator.validate_dob(dob_str)
+        if not valid:
+            messagebox.showerror("Error", msg)
+            return
+    
+        valid, msg = Validator.validate_gender(gender)
+        if not valid:   
+            messagebox.showerror("Error", msg)
+            return
+        
+        valid, msg = Validator.validate_contact(contact)
+        if not valid:
+            messagebox.showerror("Error", msg)
+            return
+        
+        valid, msg = Validator.validate_doc_salary(salary)
+        if not valid:
+            messagebox.showerror("Error", msg)
             return
 
-        try:
-            dept_num = int(dept_num)
-        except ValueError:
-            messagebox.showerror("Error", "Department Number must be an integer.")
+        valid, msg = Validator.validate_email(email)
+        if not valid:
+            messagebox.showerror("Error", msg)
             return
-
-        try:
-            datetime.strptime(dob_str, "%Y-%m-%d")
-        except ValueError:
-            messagebox.showerror("Error", "Date of Birth must be in YYYY-MM-DD format.")
+        
+        valid, msg = Validator.validate_password(password)
+        if not valid:
+            messagebox.showerror("Error", msg)
             return
-
-        if not contact.isdigit():
-            messagebox.showerror("Error", "Contact number must contain only digits.")
-            return
-
-        try:
-            salary = float(salary)
-        except ValueError:
-            messagebox.showerror("Error", "Salary must be a number.")
-            return
-
-        if master_pass != "doctorPass":
-            messagebox.showerror("Error", "Invalid Master Password.")
-            return
-
-        if len(password) < 6:
-            messagebox.showerror("Error", "Password must be at least 6 characters long.")
+        
+        valid, msg = Validator.validate_doctor_masterpwd(master_pass)
+        if not valid:
+            messagebox.showerror("Error", msg)
             return
 
         try:
