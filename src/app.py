@@ -8,7 +8,7 @@ import re
 from validator import Validator
  
 class LoginPage(BasePage):
-    """Login and Signup page for users."""
+    """Login and Signup page for patients and doctors."""
 
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
@@ -18,8 +18,7 @@ class LoginPage(BasePage):
         self.var = tk.IntVar()
         # Radio buttons can remain using place if you wish, but here we'll convert them to grid as well:
         self.create_radiobutton("Patient", self.var, 1, row=1, column=1)
-        self.create_radiobutton("Doctor", self.var, 2, row=1, column=2)
-        self.create_radiobutton("Staff", self.var, 3, row=1, column=3)
+        self.create_radiobutton("Doctor", self.var, 2, row=1, column=3)
 
         self.create_label("Email ID", row=2, column=1, sticky="e")
         self.entry_email = self.create_entry(row=2, column=2, colspan=2)
@@ -109,11 +108,11 @@ class PatientSignup(BasePage):
         self.create_label("Password:", row=7, column=0, sticky="e")
         self.password_entry = self.create_entry(row=7, column=1, show="*")
 
-        self.create_button("Submit", self.submit_form, row=8, column=0, colspan=2)
+        self.create_button("Submit", self.submit_form, row=8, column=0)
+        self.create_button("Back to Home", lambda: controller.get_frame(LoginPage), row=8, column=1)
         self.make_grid_responsive()
 
     def submit_form(self):
-        print("name": self.name_entry.get())
         patientName = self.name_entry.get().strip()
         dob_str = self.dob_entry.get().strip()
         gender = self.gender_var.get().strip()
@@ -201,7 +200,8 @@ class DoctorSignup(BasePage):
         self.create_label("Account Password:", row=10, column=0, sticky="e")
         self.password_entry = self.create_entry(row=10, column=1, show="*")
 
-        self.create_button("Submit", self.submit_form, row=11, column=0, colspan=2)
+        self.create_button("Submit", self.submit_form, row=11, column=0)
+        self.create_button("Back to Home", lambda: controller.get_frame(LoginPage), row=11, column=1)
         self.make_grid_responsive()
 
     def load_frame(self):
@@ -525,11 +525,3 @@ class DoctorLogin(BasePage):
 
         self.create_button("Show Record", lambda: self.show_record(str(id_value.get())),
                            row=r_value, column=0)
-
-class StaffLogin(BasePage):
-    """Staff dashboard page."""
-
-    def __init__(self, parent, controller):
-        super().__init__(parent, controller)
-        self.create_label("Staff Dashboard", row=0, column=0, colspan=2, font=LARGE_FONT, pady=10, padx=10)
-        self.create_button("Logout", lambda: controller.get_frame(LoginPage), row=1, column=0, colspan=2)

@@ -13,17 +13,6 @@ drop table if exists PatientCredentials;
 drop table if exists Patient;
 drop table if exists User;
 
-create table User(
-    id int unsigned not null auto_increment,
-    primary key(id),
-    fname VARCHAR(50),
-    lname VARCHAR(50),
-    email VARCHAR(100),
-    role VARCHAR(50),
-    phone VARCHAR(15),
-    password VARCHAR(255)
-);
-
 create table Patient(
   PatientID int unsigned not null auto_increment,
   primary key(PatientID),
