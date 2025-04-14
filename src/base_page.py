@@ -1,4 +1,5 @@
 import tkinter as tk
+from config import FORM_FIELD_WIDTH, MEDIUM_FONT
 class BasePage(tk.Frame):
     """A base page with helper methods to reduce redundancy."""
     def __init__(self, parent, controller=None):
