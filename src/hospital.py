@@ -1,4 +1,5 @@
-from pages import *
+from app import *
+import tkinter as tk
 
 class HospitalApp(tk.Tk):
     """Main application class for Lifeline Hospitals."""
@@ -30,7 +31,8 @@ class HospitalApp(tk.Tk):
 
 
 app = HospitalApp()
-app.state('zoomed')
+# app.state('zoomed')
+# app.geometry("800x600")
 WINDOW_WIDTH = app.winfo_screenwidth()
 WINDOW_HEIGHT = app.winfo_screenheight()
 app.geometry("%dx%d+0+0" % (WINDOW_WIDTH, WINDOW_HEIGHT))

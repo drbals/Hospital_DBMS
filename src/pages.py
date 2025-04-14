@@ -2,6 +2,7 @@ import hashlib
 import tkinter as tk
 from datetime import datetime
 from tkinter import messagebox
+from base_page import BasePage
 import client
 
 LARGE_FONT = ("Verdana", 12)
