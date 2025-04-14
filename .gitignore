@@ -5,3 +5,4 @@ src/temp.pdf
 src/archive/pdf.py
 src/archive/vit.py
 .venv
+**/__pycache__/

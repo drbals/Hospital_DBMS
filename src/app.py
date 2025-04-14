@@ -301,7 +301,8 @@ class PatientLogin(BasePage):
         self.slotLbl = None
         self.bookBtn = None
 
-        self.recordsLbl = self.create_label("Past Records", row=5, column=0, sticky="we", font=MEDIUM_FONT, bg="red", fg="white")
+        self.recordsLbl = self.create_label("Past Records", row=5, column=0, colspan=4, sticky="nsew", 
+                                            font=MEDIUM_FONT, width=HISTORY_LABEL_WIDTH, relief=tk.SUNKEN, bg="green", fg="white")
         self.make_grid_responsive()
 
     def load_frame(self):
@@ -407,7 +408,7 @@ class PatientLogin(BasePage):
                                    variable=idValue, value=ID, row=r_value, column=c_value, font=SMALL_FONT)
             r_value += 1
 
-        self.create_button("Show Record", lambda: self.show_record(idValue.get()), row=r_value, column=0, font="SMALL_FONT")
+        self.create_button("Show Record", lambda: self.show_record(idValue.get()), row=r_value, column=0)
 
 class DoctorLogin(BasePage):
     """Doctor dashboard page."""
