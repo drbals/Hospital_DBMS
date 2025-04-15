@@ -452,7 +452,7 @@ class DoctorLogin(BasePage):
         self.create_button("Show Record", lambda: self.show_record(self.id_entry.get()), row=2, column=2, font=SMALL_FONT)
 
         # Referred Cases Label
-        self.create_label("Referred Cases", row=3, column=0, colspan=3, bg="red", fg="white", sticky='we', pady=10)
+        self.create_label("Referred Cases", row=3, column=0, colspan=3, bg="green", fg="white", sticky='we', pady=10)
 
         self.make_grid_responsive()
 
@@ -466,7 +466,7 @@ class DoctorLogin(BasePage):
             return
         
         DoctorAppointments = self.get_referred_cases()
-        
+
         if rec_id == "Enter" or not rec_id.isdigit():
             messagebox.showinfo("Lifeline Hospitals", "Please enter a valid record ID!")
             return

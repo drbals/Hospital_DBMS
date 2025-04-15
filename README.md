@@ -8,8 +8,8 @@ This project aims to implement a Database Management System (DBMS) for a hospita
 ## Features
 
 - Login/Signup for Patient and Doctor
-- Schedule doctor appointments 
-- Access entire medical history 
+- Schedule doctor appointments
+- Access entire medical history
 - Review prescriptions and test reports
 
 ## Technologies Used
@@ -69,10 +69,10 @@ This project aims to implement a Database Management System (DBMS) for a hospita
 
 ## Application Screenshots
 
-![Login Form](./images/loginForm.png)
+![Login Form](Images/loginForm.png)
 
-![Signup From](./images/patientSignup.png)
+![Signup From](Images/patientSignup.png)
 
-![Patient Dashboard](./images/dashboard.png)
+![Patient Dashboard](Images/dashboard.png)
 
-![Doctor Dashboard](./images/docDashboard.png)
+![Doctor Dashboard](Images/docDashboard.png)
