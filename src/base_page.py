@@ -29,8 +29,8 @@ class BasePage(tk.Frame):
         optionmenu.grid(row=row, column=column, sticky=sticky, padx=5, pady=5, columnspan=colspan)
         return optionmenu
 
-    def create_radiobutton(self, text, variable, value, row, column, sticky="w", colspan=None, font=MEDIUM_FONT):
-        radiobutton = tk.Radiobutton(self, text=text, variable=variable, value=value, font=font)
+    def create_radiobutton(self, text, variable, value, row, column, sticky="w", colspan=None, font=MEDIUM_FONT, bg=None, fg=None):
+        radiobutton = tk.Radiobutton(self, text=text, variable=variable, value=value, font=font, bg=bg, fg=fg)
         radiobutton.grid(row=row, column=column, sticky=sticky, padx=5, pady=5, columnspan=colspan)
         return radiobutton
 

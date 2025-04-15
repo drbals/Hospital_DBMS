@@ -1,4 +1,5 @@
 from app import *
+import os
 import tkinter as tk
 
 class HospitalApp(tk.Tk):
@@ -17,7 +18,7 @@ class HospitalApp(tk.Tk):
         self.frames = {}
 
         # Frame loading
-        for F in (LoginPage, PatientSignup, DoctorSignup, PatientLogin, DoctorLogin, StaffLogin):
+        for F in (LoginPage, PatientSignup, DoctorSignup, PatientLogin, DoctorLogin):
             frame = F(self.container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -31,8 +32,7 @@ class HospitalApp(tk.Tk):
 
 
 app = HospitalApp()
-# app.state('zoomed')
-# app.geometry("800x600")
+app.state('zoomed')
 WINDOW_WIDTH = app.winfo_screenwidth()
 WINDOW_HEIGHT = app.winfo_screenheight()
 app.geometry("%dx%d+0+0" % (WINDOW_WIDTH, WINDOW_HEIGHT))

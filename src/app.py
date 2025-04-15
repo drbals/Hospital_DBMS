@@ -4,7 +4,6 @@ from tkinter import messagebox
 import client
 from config import *
 from base_page import BasePage
-import re
 from validator import Validator
  
 class LoginPage(BasePage):
@@ -13,28 +12,26 @@ class LoginPage(BasePage):
     def __init__(self, parent, controller):
         super().__init__(parent, controller)
         # Using grid for layout (replacing place)
-        self.create_label("Login/Signup", row=0, column=1, colspan=2, font=LARGE_FONT, sticky="nsew")
+        self.create_label("Login/Signup", row=0, column=0, colspan=3, font=LARGE_FONT, sticky="nsew", bg="navy", fg="white")
 
         self.var = tk.IntVar()
-        # Radio buttons can remain using place if you wish, but here we'll convert them to grid as well:
-        self.create_radiobutton("Patient", self.var, 1, row=1, column=1)
-        self.create_radiobutton("Doctor", self.var, 2, row=1, column=3)
+        self.create_label("", row=1, column=0, colspan=3, font=LARGE_FONT, sticky="nsew", bg="light blue")
+        self.create_radiobutton("Patient", self.var, 1, row=1, column=0, sticky="e", bg="light blue")
+        self.create_radiobutton("Doctor", self.var, 2, row=1, column=2, sticky="w", bg="light blue")
 
-        self.create_label("Email ID", row=2, column=1, sticky="e")
-        self.entry_email = self.create_entry(row=2, column=2, colspan=2)
-
-        self.create_label("Password", row=3, column=1, sticky="e")
-        self.entry_pwd = self.create_entry(row=3, column=2, colspan=2, show='*')
+        self.create_label("Email ID", row=2, column=1, sticky="w")
+        self.entry_email = self.create_entry(row=2, column=1, sticky="e")
+        
+        self.create_label("Password", row=3, column=1, sticky="w")
+        self.entry_pwd = self.create_entry(row=3, column=1, sticky="e", show='*')
 
         self.emailID = None
         self.pwd = None
         self.section = None
 
         self.create_button("Login", self.login, row=4, column=1, sticky="w")
-        self.create_button("Sign Up", self.signup, row=4, column=3, sticky="w")
+        self.create_button("Sign Up", self.signup, row=4, column=1, sticky="e")
 
-        # Add a column of whitespace to the right
-        self.create_label("", row=0, column=4)
         self.make_grid_responsive()
 
     def login(self):
@@ -83,7 +80,7 @@ class PatientSignup(BasePage):
 
     def __init__(self, parent, controller=None):
         super().__init__(parent, controller)
-        self.header = self.create_label("Patient Signup", row=0, column=0, colspan=2, font=LARGE_FONT)
+        self.header = self.create_label("Patient Signup", row=0, column=0, colspan=2, font=LARGE_FONT, sticky="nsew", bg="navy", fg="white")
 
         self.create_label("Patient Name:", row=1, column=0, sticky="e")
         self.name_entry = self.create_entry(row=1, column=1)
@@ -108,8 +105,8 @@ class PatientSignup(BasePage):
         self.create_label("Password:", row=7, column=0, sticky="e")
         self.password_entry = self.create_entry(row=7, column=1, show="*")
 
-        self.create_button("Submit", self.submit_form, row=8, column=0)
-        self.create_button("Back to Home", lambda: controller.get_frame(LoginPage), row=8, column=1)
+        self.create_button("Submit", self.submit_form, row=8, column=0, sticky="e")
+        self.create_button("Back to Home", lambda: controller.get_frame(LoginPage), row=8, column=1, sticky="w")
         self.make_grid_responsive()
 
     def submit_form(self):
@@ -166,7 +163,7 @@ class DoctorSignup(BasePage):
 
     def __init__(self, parent, controller=None):
         super().__init__(parent, controller)
-        self.header = self.create_label("Doctor Signup", row=0, column=0, colspan=2, font=LARGE_FONT)
+        self.header = self.create_label("Doctor Signup", row=0, column=0, colspan=2, font=LARGE_FONT, sticky="nsew", bg="navy", fg="white")
 
         self.create_label("Master Password:", row=1, column=0, sticky="e")
         self.master_pass_entry = self.create_entry(row=1, column=1, show="*")
@@ -200,8 +197,8 @@ class DoctorSignup(BasePage):
         self.create_label("Account Password:", row=10, column=0, sticky="e")
         self.password_entry = self.create_entry(row=10, column=1, show="*")
 
-        self.create_button("Submit", self.submit_form, row=11, column=0)
-        self.create_button("Back to Home", lambda: controller.get_frame(LoginPage), row=11, column=1)
+        self.create_button("Submit", self.submit_form, row=11, column=0, sticky="e")
+        self.create_button("Back to Home", lambda: controller.get_frame(LoginPage), row=11, column=1, sticky="w")
         self.make_grid_responsive()
 
     def load_frame(self):
@@ -281,16 +278,16 @@ class PatientLogin(BasePage):
     def __init__(self, parent, controller=None):
         super().__init__(parent, controller)
         # Header
-        self.header = self.create_label("Patient Dashboard", row=0, column=0, colspan=12, pady=10, padx=10, font=LARGE_FONT,
+        self.create_label("Patient Dashboard", row=0, column=0, colspan=12, pady=10, padx=10, font=LARGE_FONT,
                                         sticky="nsew", relief=tk.SUNKEN, bg="light blue", fg="black")
-        self.logOutBtn = self.create_button("Logout", lambda: self.controller.get_frame(LoginPage), row=0, column=10,
+        self.create_button("Logout", lambda: self.controller.get_frame(LoginPage), row=0, column=10,
                                             sticky="w", relief=tk.SUNKEN, bg="white", fg="black")
 
-        self.history_lbl = self.create_label("Appointment & Patient History", row=1, column=0, colspan=4, sticky="nsew", 
+        self.create_label("Appointment & Patient History", row=1, column=0, colspan=4, sticky="nsew", 
                                              font=MEDIUM_FONT, relief=tk.SUNKEN, width=HISTORY_LABEL_WIDTH, bg="green", fg="white")
-        self.record_lbl = self.create_label("Record Details", row=1, column=4, colspan=4, sticky="nsew", 
+        self.create_label("Record Details", row=1, column=4, colspan=4, sticky="nsew", 
                                             font=MEDIUM_FONT, relief=tk.SUNKEN, width=RECORD_LABEL_WIDTH, bg="blue", fg="white")
-        self.details_lbl = self.create_label("Patient Details & Reports", row=1, column=8, colspan=4, sticky="nsew", 
+        self.create_label("Patient Details & Reports", row=1, column=8, colspan=4, sticky="nsew", 
                                              font=MEDIUM_FONT, relief=tk.SUNKEN, width=RECORD_LABEL_WIDTH, bg="brown", fg="white")
 
         self.deptListResult = client.transact("appointmentdept")
@@ -316,7 +313,7 @@ class PatientLogin(BasePage):
         self.slotLbl = None
         self.bookBtn = None
 
-        self.recordsLbl = self.create_label("Past Records", row=5, column=0, colspan=4, sticky="nsew", 
+        self.create_label("Past Records", row=5, column=0, colspan=4, sticky="ew", 
                                             font=MEDIUM_FONT, width=HISTORY_LABEL_WIDTH, relief=tk.SUNKEN, bg="green", fg="white")
         self.make_grid_responsive()
 
@@ -432,7 +429,12 @@ class DoctorLogin(BasePage):
     def __init__(self, parent, controller=None):
         super().__init__(parent, controller)
 
-        self.create_label("Doctor Dashboard", row=0, column=0, colspan=12, font=LARGE_FONT, pady=10)
+        self.create_label("Doctor Dashboard", row=0, column=0, colspan=12, pady=10, padx=10, font=LARGE_FONT,
+                                        sticky="nsew", relief=tk.SUNKEN, bg="light blue", fg="black")
+
+        # Logout Button
+        self.create_button("Logout", lambda: controller.get_frame(LoginPage), row=0, column=10,
+                                            sticky="w", relief=tk.SUNKEN, bg="white", fg="black")
 
         # Section Labels
         self.create_label("Medical History", row=1, column=0, colspan=3, sticky='nsew',
@@ -443,20 +445,15 @@ class DoctorLogin(BasePage):
                           bg="brown", fg="white", relief=tk.SUNKEN, width=RECORD_LABEL_WIDTH)
 
         # Appointment ID input
-        self.create_label("Appointment ID:", row=2, column=0, sticky='e')
+        self.create_label("Appt ID:", row=2, column=0, font=SMALL_FONT, sticky='e')
         self.id_entry = self.create_entry(row=2, column=1)
         self.id_entry.insert(0, "Enter")
 
-        self.create_button("Show Record", lambda: self.show_record(self.id_entry.get()), row=2, column=2)
+        self.create_button("Show Record", lambda: self.show_record(self.id_entry.get()), row=2, column=2, font=SMALL_FONT)
 
         # Referred Cases Label
-        self.create_label("Referred Cases", row=3, column=1, bg="red", fg="white", sticky='we', pady=10)
+        self.create_label("Referred Cases", row=3, column=0, colspan=3, bg="red", fg="white", sticky='we', pady=10)
 
-        # Prescribe Medicines Label
-        self.create_label("Prescribe Meds", row=4, column=0)
-
-        # Logout Button
-        self.create_button("Logout", lambda: controller.get_frame(LoginPage), row=4, column=10)
         self.make_grid_responsive()
 
     def load_frame(self):
@@ -465,8 +462,17 @@ class DoctorLogin(BasePage):
 
     def show_record(self, rec_id):
         """Displays detailed record information."""
+        if DoctorLogin.doctorId is None:
+            return
+        
+        DoctorAppointments = self.get_referred_cases()
+        
         if rec_id == "Enter" or not rec_id.isdigit():
             messagebox.showinfo("Lifeline Hospitals", "Please enter a valid record ID!")
+            return
+    
+        if int(rec_id) not in DoctorAppointments:
+            messagebox.showinfo("Lifeline Hospitals", "Please select a record from the list!")
             return
 
         record_columns = [3, 4, 5, 6]
@@ -523,5 +529,7 @@ class DoctorLogin(BasePage):
             tk.Radiobutton(self, text=text, variable=id_value, value=ID).grid(row=r_value, column=0, columnspan=2)
             r_value += 1
 
-        self.create_button("Show Record", lambda: self.show_record(str(id_value.get())),
-                           row=r_value, column=0)
+        if r_value > 4:
+            self.create_button("Show Record", lambda: self.show_record(str(id_value.get())),
+                            row=r_value, column=0, font=SMALL_FONT, relief=tk.SUNKEN)
+        return [ID for timeStamp, ID, ptName in records_list]
