@@ -69,10 +69,10 @@ This project aims to implement a Database Management System (DBMS) for a hospita
 
 ## Application Screenshots
 
-![Login Form](Images/loginForm.png)
+![Login Form](src/images/loginForm.png)
 
-![Signup From](Images/patientSignup.png)
+![Signup From](src/images/patientSignup.png)
 
-![Patient Dashboard](Images/dashboard.png)
+![Patient Dashboard](src/images/dashboard.png)
 
-![Doctor Dashboard](Images/docDashboard.png)
+![Doctor Dashboard](src/images/docDashboard.png)
